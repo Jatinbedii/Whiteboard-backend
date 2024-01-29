@@ -9,7 +9,19 @@ const io = new Server(httpserver, {
   },
 });
 
-io.on("connection", (socket) => {});
+io.on("connection", (socket) => {
+  socket.on("joinroom", ({ name, room }) => {
+    socket.join(room);
+  });
+
+  socket.on("drawline", ({ prevpoint, currentpoint, color, room }) => {
+    socket.to(room).emit("drawline", { prevpoint, currentpoint, color });
+  });
+
+  socket.on("clear", ({ name, room }) => {
+    socket.to(room).emit("clear", { name });
+  });
+});
 
 httpserver.listen(3001, () => {
   console.log("app is listening");
