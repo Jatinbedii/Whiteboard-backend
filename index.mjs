@@ -22,6 +22,9 @@ io.on("connection", (socket) => {
   socket.on("clear", ({ name, room }) => {
     socket.to(room).emit("clear", { name });
   });
+  socket.on("message", ({ name, chatinput, room }) => {
+    socket.to(room).emit("message", { name, message: chatinput });
+  });
 
   socket.on("canvasdata", ({ data, socketid }) => {
     socket.to(socketid).emit("canvasdata", { data });
