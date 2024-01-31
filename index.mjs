@@ -12,6 +12,7 @@ const io = new Server(httpserver, {
 io.on("connection", (socket) => {
   socket.on("joinroom", ({ name, room }) => {
     socket.join(room);
+    socket.to(room).emit("userjoined", { name, socketid: socket.id });
   });
 
   socket.on("drawline", ({ prevpoint, currentpoint, color, room }) => {
@@ -20,6 +21,10 @@ io.on("connection", (socket) => {
 
   socket.on("clear", ({ name, room }) => {
     socket.to(room).emit("clear", { name });
+  });
+
+  socket.on("canvasdata", ({ data, socketid }) => {
+    socket.to(socketid).emit("canvasdata", { data });
   });
 });
 
