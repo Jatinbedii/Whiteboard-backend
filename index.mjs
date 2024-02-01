@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { Server } from "socket.io";
+import cors from "cors";
 import { createServer } from "http";
 const app = express();
 const httpserver = createServer(app);
@@ -9,6 +10,11 @@ const io = new Server(httpserver, {
     origin: [process.env.FRONTEND],
   },
 });
+app.use(
+  cors({
+    origin: process.env.FRONTEND,
+  })
+);
 
 io.on("connection", (socket) => {
   socket.on("joinroom", ({ name, room }) => {
