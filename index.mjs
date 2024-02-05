@@ -20,6 +20,9 @@ io.on("connection", (socket) => {
   socket.on("joinroom", ({ name, room }) => {
     socket.join(room);
     socket.to(room).emit("userjoined", { name, socketid: socket.id });
+    socket.emit("usercount", {
+      count: io.sockets.adapter.rooms.get(room)?.size,
+    });
   });
 
   socket.on("drawline", ({ prevpoint, currentpoint, color, room }) => {
