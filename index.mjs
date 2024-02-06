@@ -22,7 +22,7 @@ io.on("connection", (socket) => {
     socket.join(room);
     usermap.set(socket.id, { room: room, name: name });
     socket.to(room).emit("userjoined", { name, socketid: socket.id });
-    socket.to(room).emit("usercount", {
+    io.to(room).emit("usercount", {
       count: io.sockets.adapter.rooms.get(room)?.size,
     });
   });
