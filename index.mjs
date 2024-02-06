@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import cors from "cors";
 import { createServer } from "http";
 const app = express();
+const usermap = new Map();
 const httpserver = createServer(app);
 const io = new Server(httpserver, {
   cors: {
@@ -19,6 +20,7 @@ app.use(
 io.on("connection", (socket) => {
   socket.on("joinroom", ({ name, room }) => {
     socket.join(room);
+    usermap.set(socket.id, { room: room, name: name });
     socket.to(room).emit("userjoined", { name, socketid: socket.id });
     socket.to(room).emit("usercount", {
       count: io.sockets.adapter.rooms.get(room)?.size,
@@ -38,6 +40,14 @@ io.on("connection", (socket) => {
 
   socket.on("canvasdata", ({ data, socketid }) => {
     socket.to(socketid).emit("canvasdata", { data });
+  });
+
+  socket.on("disconnect", () => {
+    const data = usermap.get(socket.id);
+    usermap.delete(socket.id);
+    socket
+      .to(data.room)
+      .emit("message", { name: "", message: `${data.name} left the room` });
   });
 });
 
