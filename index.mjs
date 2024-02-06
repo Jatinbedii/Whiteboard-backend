@@ -45,9 +45,13 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const data = usermap.get(socket.id);
     usermap.delete(socket.id);
-    socket
-      .to(data.room)
-      .emit("message", { name: "", message: `${data.name} left the room` });
+    socket.to(data.room).emit("message", {
+      name: "",
+      message: `${data.name} left the room`,
+    });
+    io.to(data.room).emit("usercount", {
+      count: io.sockets.adapter.rooms.get(data.room)?.size,
+    });
   });
 });
 
